@@ -14,11 +14,10 @@ import com.url.shorten.model.URLStore;
 
 @RestController
 @RequestMapping("/api")
-public class GetClientLengthURL extends Const{
+public class GetClientLengthURLRest extends Const{
 
 	@Autowired
 	private URLService urlService;
-	
 	
 	@PostMapping("/long/to/short")
     public String getUser(@RequestBody LongURL url) {
@@ -26,7 +25,7 @@ public class GetClientLengthURL extends Const{
     }
 
 	@PostMapping("/get/long/url")
-    public URLStore getongUrl(@RequestBody ShortURL url) {
+    public URLStore getLongUrl(@RequestBody ShortURL url) {
     	return urlService.getShorterUrl(url.getShortUrl());
     }
 }
