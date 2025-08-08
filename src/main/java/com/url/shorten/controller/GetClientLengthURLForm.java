@@ -18,7 +18,6 @@ public class GetClientLengthURLForm extends Util implements URLConstants{
 	@Autowired
 	private URLService urlService;
 
-	@SuppressWarnings("null")
 	@PostMapping(LONG_TO_SHORT_IN)
 	public String getUser(@RequestBody String url) throws Exception {
 

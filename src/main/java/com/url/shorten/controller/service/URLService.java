@@ -31,5 +31,13 @@ public class URLService {
 	public URLStore getShorterUrl(String shortUrl) {
 		return uRLRepository.findByShortUrl(shortUrl);
 	}
+	
+	public Long getNoOfLinkGenerated() {
+		return uRLRepository.count();
+	}
+	
+	public int getNoOfLinksAccessed() {
+		return 15;
+	}
 
 }
