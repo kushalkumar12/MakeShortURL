@@ -130,21 +130,55 @@
             color: #3498db;
             text-decoration: none;
         }
+		.stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+		.stat-item {
+		    text-align: center;
+		    min-width: 150px;
+		}
+
+		.stat-number {
+		    font-size: 2.5rem;
+		    font-weight: 700;
+		    color: var(--primary-color);
+		    margin-bottom: 5px;
+		}
+
+		.stat-label {
+		    font-size: 0.9rem;
+		    opacity: 0.8;
+		}
 
     </style>
 </head>
 <body>
-	<form name = "mini" method="post">
     <div class="container">
         <header>
             <div class="logo">Mini <span class="highlight">URL</span></div>
             <div class="tagline">Professional, Fast, and Reliable URL Shortener</div>
         </header>
+		
+		<div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="linksShortened">10+</div>
+                <div class="stat-label">Links Shortened</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="clicksRedirected">10+</div>
+                <div class="stat-label">Clicks Redirected</div>
+            </div>
+        </div>
 
         <div class="url-form">
-            <form id="shortenForm" method="post" action="/long/to/short/in">
+            <form name = "mini" method="post">
                 <input type="url" id="originalUrl" name="lengthUrl" placeholder="Enter a long URL (e.g. https://...)" required>
-                <a href="#" class="submit-link" onclick="submitForm()">Shorten Now</a>
+                <a href="#" class="submit-link" onclick="submitForm(); loadURLCount();">Shorten Now</a>
             </form>
             <div class="result" id="result">
                 <p>Shortened URL: <a href="#" id="shortUrl" target="_blank"></a></p>
@@ -171,7 +205,6 @@
             &copy; 2025 ShortURL Inc. All rights reserved.
         </footer>
     </div>
-	</form>
     <script>
         function submitForm() {
             const form = document.getElementById('shortenForm');
@@ -193,6 +226,32 @@
 			});
 
         }
+		
+		function loadURLCount(){
+			
+			let linksGenerated = 10;
+			let clickRedirected = 15;
+			
+			const stats = [
+			                { element: 'linksShortened', target: linksGenerated, duration: 200 },
+			                { element: 'clicksRedirected', target: clickRedirected, duration: 200 }
+			            ];
+			stats.forEach(stat => {
+			               const element = document.getElementById(stat.element);
+			               const start = 0;
+			               const increment = stat.target / (stat.duration / 16); // 60fps
+			               let current = start;
+			               const timer = setInterval(() => {
+			                   current += increment;
+			                   if (current >= stat.target) {
+			                       clearInterval(timer);
+			                       element.textContent = stat.target.toLocaleString() + '+';
+			                   } else {
+			                       element.textContent = Math.floor(current).toLocaleString() + '+';
+			                   }
+			               }, 16);
+			           });
+		}
     </script>
 </body>
 </html>
