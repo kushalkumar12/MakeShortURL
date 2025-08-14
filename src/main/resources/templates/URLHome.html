@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MiniURL - Professional URL Shortener</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --text: #2b2d42;
+            --text-light: #8d99ae;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e9ecef;
+            --error: #ef233c;
+            --success: #4cc9f0;
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --dark-text: #e1e1e1;
+            --dark-border: #333333;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .logo .highlight {
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            color: var(--primary);
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+        
+        .url-form {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .url-form input[type="url"] {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .url-form input[type="url"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 1.75rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            display: none;
+            background: rgba(67, 97, 238, 0.05);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .result p {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .result a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+        
+        .result a:hover {
+            text-decoration: underline;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .recent-links {
+            margin-top: 2rem;
+        }
+        
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .link-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            flex: 1;
+            margin-right: 1rem;
+            word-break: break-all;
+        }
+        
+        .link-item .clicks {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        /* Dark Mode */
+        body.dark-mode {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        
+        body.dark-mode .url-form,
+        body.dark-mode .link-item {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+        
+        body.dark-mode .url-form input[type="url"] {
+            background: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        
+        body.dark-mode .url-form input[type="url"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        body.dark-mode .result {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        body.dark-mode .logo,
+        body.dark-mode .section-title {
+            color: var(--dark-text);
+        }
+        
+        body.dark-mode .tagline,
+        body.dark-mode .link-item .clicks {
+            color: var(--text-light);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--error);
+            margin-bottom: 1rem;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .modal-message {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: inherit;
+        }
+        
+        .modal-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .url-form {
+                padding: 1.5rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .submit-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+        </button>
+        <div class="logo">
+            <i class="fas fa-link logo-icon"></i>
+            <span>Mini<span class="highlight">URL</span></span>
+        </div>
+        <div class="tagline">Professional, secure, and reliable URL shortening service</div>
+    </header>
+
+    <div class="url-form">
+        <div class="input-group">
+            <input type="url" id="originalUrl" name="lengthUrl" placeholder="Paste your long URL here (e.g. https://...)" required>
+            <button class="submit-btn" id="shortenBtn">
+                <i class="fas fa-compress-alt"></i>
+                Shorten
+            </button>
+        </div>
+        <div class="result" id="result">
+            <p>
+                <i class="fas fa-link"></i>
+                Shortened URL: <a href="#" id="shortUrl" target="_blank"></a>
+            </p>
+        </div>
+    </div>
+
+    <div class="recent-links">
+        <h4 class="section-title">
+            <i class="fas fa-history"></i>
+            Recently Shortened URLs
+        </h4>
+        <div id="recentLinks"></div>
+    </div>
+
+    <footer>
+        &copy; 2025 MiniURL. All rights reserved.
+    </footer>
+</div>
+
+<!-- Error Modal -->
+<div class="modal" id="errorModal">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h3 class="modal-title">Something Went Wrong</h3>
+        <p class="modal-message">We couldn't process your request. Please try again.</p>
+        <button class="modal-btn" id="modalCloseBtn">OK</button>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Theme handling
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        $("body").addClass("dark-mode");
+        $("#themeToggle").html('<i class="fas fa-sun"></i><span>Light Mode</span>');
+    }
+
+    // Theme toggle
+    $("#themeToggle").click(function() {
+        $("body").toggleClass("dark-mode");
+        if ($("body").hasClass("dark-mode")) {
+            $("#themeToggle").html('<i class="fas fa-sun"></i><span>Light Mode</span>');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            $("#themeToggle").html('<i class="fas fa-moon"></i><span>Dark Mode</span>');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    // Modal controls
+    $("#modalCloseBtn").click(function() {
+        $("#errorModal").removeClass("show");
+    });
+
+    // Close modal when clicking outside
+    $(window).click(function(e) {
+        if (e.target === document.getElementById("errorModal")) {
+            $("#errorModal").removeClass("show");
+        }
+    });
+
+    // URL shortening - THE IMPORTANT PART
+    $("#shortenBtn").click(function(e) {
+        e.preventDefault();
+        const originalUrl = $("#originalUrl").val().trim();
+        
+        if (!originalUrl) {
+            $("#errorModal .modal-message").text("Please enter a URL first");
+            $("#errorModal").addClass("show");
+            return;
+        }
+
+        // Show loading state
+        const $btn = $(this);
+        $btn.html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+        $btn.prop('disabled', true);
+
+        $.ajax({
+            url: "/long/to/short/in",
+            type: "POST",
+            data: { url: originalUrl },
+            dataType: 'json',
+            success: function(response) {
+                // Reset button state
+                $btn.html('<i class="fas fa-compress-alt"></i> Shorten');
+                $btn.prop('disabled', false);
+
+                // Check for "No Requested URL" in any form
+                const isError = response === "No Requested URL" || 
+                              (response && (response.message === "No Requested URL" || 
+                                          response.shortUrl === "No Requested URL"));
+
+                if (isError) {
+                    $("#errorModal .modal-message").text("Something went wrong. Please try again.");
+                    $("#errorModal").addClass("show");
+                    $("#result").hide();
+                    return;
+                }
+
+                // Only proceed if we have a valid URL
+                if (response && response.shortUrl) {
+                    $("#shortUrl").attr("href", response.shortUrl).text(response.shortUrl);
+                    $("#result").show();
+
+                    // Add to recent links
+                    const item = `
+                        <div class="link-item">
+                            <a href="${response.shortUrl}" target="_blank">${response.shortUrl}</a>
+                        </div>
+                    `;
+                    $("#recentLinks").prepend(item);
+                    
+                    // Clear input
+                    $("#originalUrl").val("");
+                } else {
+                    $("#errorModal .modal-message").text("Invalid response from server");
+                    $("#errorModal").addClass("show");
+                    $("#result").hide();
+                }
+            },
+            error: function(xhr) {
+                $btn.html('<i class="fas fa-compress-alt"></i> Shorten');
+                $btn.prop('disabled', false);
+                $("#errorModal .modal-message").text("Server error. Please try again.");
+                $("#errorModal").addClass("show");
+                $("#result").hide();
+                console.error("Error:", xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

@@ -15,6 +15,6 @@ public class MappingConstants extends Const implements URLConstants{
 	
 	private static final Map<String, String> rootURLToPage = new HashMap<>();
 	static {
-		rootURLToPage.put(SHORTEN_URL_HOME, "Home");
+		rootURLToPage.put(SHORTEN_URL_HOME, "URLHome");
 	}
 }
