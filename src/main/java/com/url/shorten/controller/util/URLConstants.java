@@ -13,4 +13,5 @@ public interface URLConstants {
 	// Alternative version if you need the exact paths you specified
 	public static final String LONG_TO_SHORT_IN = "/long/to/short/in";
 	public static final String GET_LONG_URL_IN = "/get/long/url/in";
+	public static final String GET_QR_CODE = "/get/qr/code";
 }

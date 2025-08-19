@@ -3,7 +3,6 @@ package com.url.shorten.controller.service;
 import java.net.InetAddress;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -57,9 +56,13 @@ public class URLService extends Util{
 		
 		return shorterUrl;
 	}
-
+	
 	public URLStore getShorterUrl(String shortUrl) {
 		return uRLRepository.findByShortUrl(shortUrl);
+	}
+	
+	public long getGeneratedLinksCount() {
+		return uRLRepository.count();
 	}
 	
 	
